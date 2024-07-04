@@ -114,8 +114,7 @@ M.run = function(params, send)
     return -1
   end
 
-  ---@type JsonContext
-  local json = { open = false, text = "" }
+  local capture = {}
 
   local criterion_args = table.concat(
     criterion.make_test_args(
@@ -131,7 +130,7 @@ M.run = function(params, send)
     command = "meson",
     args = { "test", params.test_exe, "-C", params.builddir, "-v", "--test-args=" .. criterion_args },
     on_stdout = function(_, data)
-      local done, report = util.capture_json(data, json)
+      local done, report = util.capture_results(capture, data, params.test_exe)
       if done and report then
         util.print_results(report, send)
         M.test_results = report
